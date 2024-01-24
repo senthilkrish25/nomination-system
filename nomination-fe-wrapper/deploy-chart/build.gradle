@@ -1,0 +1,17 @@
+plugins {
+    id 'org.unbroken-dome.helm'
+}
+
+helm {
+    debug = true
+    filtering {
+        filePatterns.add('**/_helpers.tpl')
+        filePatterns.add('**/values.yaml')
+        filePatterns.add('**/Chart.yaml')
+
+        // these are deprecated:
+        values.put 'dockerImageTag', project.property('dockerImageTag')
+        values.put 'dockerRepository', project.property('dockerRepository')
+        values.put 'dockerhubProxy', project.property('dockerhubProxy')
+    }
+}

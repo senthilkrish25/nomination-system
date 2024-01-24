@@ -1,0 +1,5 @@
+rootProject.name = 'nomination-be'
+include 'customer-manager'
+include 'deploy-chart'
+include 'master-data-manager'
+

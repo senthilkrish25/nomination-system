@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-manager
+  template:
+    metadata:
+      labels:
+        app: customer-manager
+    spec:
+      containers:
+        - name: customer-manager
+          image: snocacr01.azurecr.io/customer-manager:latest
+          ports:
+            - containerPort: 8587

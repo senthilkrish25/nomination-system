@@ -1,0 +1,17 @@
+plugins {
+    id 'com.github.node-gradle.node' version '7.0.1' apply false
+}
+group 'ae.snoc.nomination'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    ext {
+        set('nodeVersion', '14.17.6')
+        set('node2Version', '14.17.6')
+        set('standardDockerImage', "${dockerhubProxy}eclipse-temurin:11-jre")
+    }
+}

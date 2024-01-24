@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: 'Customer Manager'
+  profiles:
+    active: local, h2
+
+server:
+  port: 8587

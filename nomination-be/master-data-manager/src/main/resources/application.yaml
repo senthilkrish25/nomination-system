@@ -1,0 +1,9 @@
+server:
+  port: 8588
+
+spring:
+  application:
+    name: 'Master Data Management'
+
+  profiles:
+    active: h2

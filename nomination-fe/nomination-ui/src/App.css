@@ -1,0 +1,71 @@
+.text-centre {
+    text-align: center;
+}
+
+/* Add borders and styling to DataGrid rows */
+.MuiDataGrid-row {
+    border-bottom: 2px solid rgb(234, 234, 234);
+}
+
+/* Optional: Highlight the row on hover */
+.MuiDataGrid-row:hover {
+    background-color: #f5f5f5;
+}
+.MuiDataGrid-columnHeaders{
+    background-color:  #5c8a2d;
+    color: white;
+}
+
+/* Remove the cell selection outline */
+.MuiDataGrid-cell:focus {
+    outline: none !important;
+}
+
+.Bing-Action-Panel {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.Bing-Keywords-Action-Panel {
+    display: flex;
+    justify-content: center;
+}
+
+.Bing-Action-Panel .MuiToggleButton-root, .Bing-Data-Grid .MuiToggleButton-root {
+    line-height: 0.89;
+}
+
+.Bing-Info-Tip {
+    background: white;
+}
+
+.MuiDataGrid-main {
+    font-size: 0.875rem;
+}
+
+/* App.css */
+.spin {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* fullWidth property was not working on text field of date picker */
+.date-picker-quick-options .MuiTextField-root {
+    width: 100%;
+}
+
+/* fade in/out infinitely */
+.fade-animate {
+    animation: fadein 2s linear infinite;
+}
+
+@keyframes fadein {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}

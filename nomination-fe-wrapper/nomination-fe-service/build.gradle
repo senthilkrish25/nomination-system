@@ -1,0 +1,59 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'com.google.cloud.tools.jib'
+    id 'java'
+}
+
+group 'ae.snoc.nomination'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_17
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    // The webResources config is for bringing in the web resources from the ui-workspace
+    webResources
+}
+
+processResources {
+    from configurations.webResources
+    into "static"
+}
+
+dependencies {
+    webResources project(path: ':nomination-fe:nomination-ui', configuration: 'nominationFeBuild')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'net.logstash.logback:logstash-logback-encoder:6.6'
+    implementation 'org.codehaus.janino:janino'
+    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth:3.1.9'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+jib {
+    from {
+        image = "${standardDockerImage}"
+    }
+    to {
+        image = "${dockerRepository}/nomination-fe:${dockerImageTag}"
+    }
+    container {
+        ports = ['8224', '5005']
+        jvmFlags = [
+                '-XX:MinRAMPercentage=60.0',
+                '-XX:MaxRAMPercentage=80.0',
+                '-XX:+PrintFlagsFinal',
+                '-XshowSettings:vm',
+                '-Dspring.profiles.active=docker',
+                '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005'
+        ]
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+    }
+}

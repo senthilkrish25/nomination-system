@@ -1,0 +1,107 @@
+trigger:
+  - main
+pr:
+  branches:
+    include:
+      # must quote since "*" is a YAML reserved character; we want a string
+      - '*'
+
+stages:
+  - stage: Build
+    displayName: Build
+    jobs:
+#      - job: HelmPackage
+#        pool:
+#          vmImage: ubuntu-latest
+#        variables:
+#          GRADLE_USER_HOME: $(Pipeline.Workspace)/.gradle
+#        steps:
+#          - task: Cache@2
+#            inputs:
+#              key: 'gradle | "$(Agent.OS)" | **/build.gradle'
+#              restoreKeys: |
+#                gradle | "$(Agent.OS)"
+#                gradle
+#              path: $(GRADLE_USER_HOME)
+#            displayName: Configure gradle caching
+#          - bash: |
+#              commit_id=$(Build.SourceVersion)
+#              if [[ $(Build.SourceBranchName) == "main" ]] || [[ $(Build.SourceBranchName) == release* ]] ; then
+#                  echo "##vso[task.setvariable variable=docker_image_tag]release-$(build.BuildId)-${commit_id:0:8}"
+#              else
+#                  echo "##vso[task.setvariable variable=docker_image_tag]temp-${commit_id:0:8}"
+#              fi
+#            displayName: 'Calculate $docker_image_tag'
+#          - task: Gradle@2
+#            env:
+#              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+#              bamboo_buildKey: $(build.buildnumber)
+#              bamboo_buildNumber: $(Build.BuildId)
+#              bamboo_repository_branch_name: $(Build.SourceBranchName)
+#              bamboo_repository_revision_number: $(Build.SourceVersion)
+#            inputs:
+#              workingDirectory: ''
+#              gradleWrapperFile: 'gradlew'
+#              gradleOptions: '-Xmx3072m'
+#              javaHomeOption: 'JDKVersion'
+#              jdkVersionOption: '1.11'
+#              jdkArchitectureOption: 'x64'
+#              publishJUnitResults: true
+#              testResultsFiles: '**/TEST-*.xml'
+#              tasks: ':deploy-amplify:helmPackage'
+#              options: '--build-cache --no-daemon -PdockerImageTag=$(docker_image_tag)'
+#          - publish: deploy-amplify/build/version.properties
+#            displayName: 'Upload project-version Pipeline Artifact'
+#            artifact: project-version
+#          - publish: deploy-amplify/build/helm/charts
+#            displayName: 'Upload helm-package Pipeline Artifact'
+#            artifact: helm-package
+#          - publish: deploy-amplify/environments
+#            displayName: 'Upload helm-environments Pipeline Artifact'
+#            artifact: helm-environments
+      - job: BackEnd_Build
+        pool:
+          vmImage: ubuntu-latest
+        variables:
+          GRADLE_USER_HOME: $(Pipeline.Workspace)/.gradle
+        steps:
+          - task: Cache@2
+            inputs:
+              key: 'gradle | "$(Agent.OS)" | **/build.gradle'
+              restoreKeys: |
+                gradle | "$(Agent.OS)"
+                gradle
+              path: $(GRADLE_USER_HOME)
+            displayName: Configure gradle caching
+          - task: Docker@2
+            displayName: Login to ACR
+            inputs:
+              command: login
+              containerRegistry: snocacr01
+          - bash: |
+              commit_id=$(Build.SourceVersion)
+              if [[ $(Build.SourceBranchName) == "main" ]] || [[ $(Build.SourceBranchName) == release* ]] ; then
+                  echo "##vso[task.setvariable variable=docker_image_tag]release-$(build.BuildId)-${commit_id:0:8}"
+              else
+                  echo "##vso[task.setvariable variable=docker_image_tag]temp-${commit_id:0:8}"
+              fi
+            displayName: 'Calculate $docker_image_tag'
+          - task: Gradle@2
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+              bamboo_buildKey: $(build.buildnumber)
+              bamboo_buildNumber: $(Build.BuildId)
+              bamboo_repository_branch_name: $(Build.SourceBranchName)
+              bamboo_repository_revision_number: $(Build.SourceVersion)
+            inputs:
+              workingDirectory: ''
+              gradleWrapperFile: 'gradlew'
+              gradleOptions: '-Xmx3072m'
+              javaHomeOption: 'JDKVersion'
+              jdkVersionOption: '1.11'
+              jdkArchitectureOption: 'x64'
+              publishJUnitResults: true
+              testResultsFiles: '**/TEST-*.xml'
+              tasks: ':customer-manager:build'
+              options: '--build-cache --no-daemon -PdockerImageTag=$(docker_image_tag)'
+

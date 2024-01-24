@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  customer-manager:
+    image: snocregistry.azurecr.io/nomination-system/customer-manager:latest
+    ports:
+      - "8587:8587"
+
+#  user-manager:
+#    image: snocregistry.azurecr.io/nomination-system/user-manager:latest
+#    ports:
+#      - "8081:8081"
+#
+#  auth-manager:
+#    image: snocregistry.azurecr.io/nomination-system/auth-manager:latest
+#    ports:
+#      - "8082:8082"

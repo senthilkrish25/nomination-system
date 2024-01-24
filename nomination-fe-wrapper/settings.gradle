@@ -1,0 +1,5 @@
+rootProject.name = 'nomination-fe-wrapper'
+include 'nomination-fe-service'
+include 'deploy-chart'
+include ':nomination-fe:nomination-ui'
+

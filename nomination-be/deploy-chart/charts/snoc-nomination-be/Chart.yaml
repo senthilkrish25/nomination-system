@@ -1,0 +1,5 @@
+apiVersion: v2
+name: ${chartName}
+description: nomination-be chart
+type: application
+version: ${chartVersion}

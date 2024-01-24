@@ -1,0 +1,24 @@
+image: docker:20.10.12
+
+pipelines:
+  default:
+    - step:
+        name: Build and Push Docker Image for customer-manager
+        script:
+          - export ACR_NAME=snocregistry
+          - export ACR_REGISTRY=$ACR_NAME.azurecr.io
+          - export AZURE_SERVICE_PRINCIPAL_ID=a442ba53-314e-41a0-8a65-c638f2fb7987
+          - export AZURE_SERVICE_PRINCIPAL_SECRET=e_q8Q~._6eBBrIKKqym7o6HEGtkip.CTTc98ObB8
+
+          # Log in to Azure Container Registry using service principal
+          - echo "Logging in to Azure Container Registry..."
+          - echo $AZURE_SERVICE_PRINCIPAL_SECRET | docker login $ACR_REGISTRY --username $AZURE_SERVICE_PRINCIPAL_ID --password-stdin
+
+          # Build Docker image for customer-manager
+          - echo "Building Docker image..."
+          - cd nomination-be/customer-manager
+          - docker build -t $ACR_REGISTRY/nomination-system/customer-manager:$BITBUCKET_COMMIT .
+
+          # Push Docker image to Azure Container Registry
+          - echo "Pushing Docker image to Azure Container Registry..."
+          - docker push $ACR_REGISTRY/nomination-system/customer-manager:$BITBUCKET_COMMIT

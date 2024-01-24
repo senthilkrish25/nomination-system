@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nomination-ui
+  labels:
+    expose-via-ingress: "true"
+    {{ include "snoc.labels" . | indent 4 }}
+spec:
+  ports:
+    - name: http
+      port: 5015
+      protocol: TCP
+      targetPort: 5015
+  selector:
+    app: {{ .Release.Name }}-nomination-ui
+  type: ClusterIP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-nomination-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-nomination-ui
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-nomination-ui
+        {{ include "snoc.labels" . | indent 8 }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-nomination-ui
+          image: "{{ .Values.image.repository }}/nomination-ui:{{ .Chart.Version }}"
+          ports:
+            - name: app-port
+              containerPort: 5015
+          livenessProbe:
+            tcpSocket:
+              port: app-port
+          readinessProbe:
+            tcpSocket:
+              port: app-port
+          startupProbe:
+            tcpSocket:
+              port: app-port
+            failureThreshold: 30
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 100m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 256Mi
+          env:
+            {{- include "snoc.envvars" . | indent 12}}
